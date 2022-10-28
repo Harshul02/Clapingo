@@ -27,7 +27,7 @@ const Student = mongoose.model("Student", studentSchema);
 function verifyToken(req,res,next){
     const bearerHeader = req.headers['authorization'];
 
-    if(typeof bearerHeader != 'undefined'){
+    if(typeof bearerHeader !== 'undefined'){
         const bearer = bearerHeader.split(' ');
         const bearerToken = bearer[1];
         req.token = bearerToken;
@@ -48,56 +48,61 @@ app.route("/students")
     });
 })
 .post(verifyToken ,function(req,res){
-    const name1 = req.body.studName;
-    const id = req.body.teaId;
     jwt.verify(req.token, 'secretkey', function(err,authData){
-        
-    })
-    Student.findOne({name: name1}, function(err,foundData)
-    {
-        if(!err)
+        if(err)
         {
-            if(foundData)
-            {
-                foundData.favourite_teacher.push(id);
-                foundData.save();
-                Teacher.updateOne({tid: id},{$inc: {count: 1}}, function(err){
-                    if(!err){
-                        console.log("successfully increased count by 1 from found");
-                    }
-                    else{
-                        console.log(err);
-                    }
-                });
-                res.send("Successfully updated data");
-            }
-            else{
-                const stud = new Student({
-                    name: name1,
-                    favourite_teacher: []
-                });
-                stud.favourite_teacher.push(id);
-                stud.save(function(err){
-                    if(!err){
-                        res.send("Successfully Added new student");
-                    }
-                    else{
-                        res.send(err);
-                    }
-                });
-                Teacher.updateOne({tid: id},{$inc: {count: 1}}, function(err){
-                    if(!err){
-                        console.log("successfully increased count by 1 from new Record");
-                    }
-                    else{
-                        console.log(err);
-                    }
-                });
-            }
+            res.sendStatus(403);
         }
         else{
-            res.send(err);
-        }
+            const name1 = req.body.studName;
+            const id = req.body.teaId;
+            Student.findOne({name: name1}, function(err,foundData)
+            {
+            if(!err)
+            {
+                if(foundData)
+                {
+                    foundData.favourite_teacher.push(id);
+                    foundData.save();
+                    Teacher.updateOne({tid: id},{$inc: {count: 1}}, function(err){
+                        if(!err){
+                            console.log("successfully increased count by 1 from found");
+                        }
+                        else{
+                            console.log(err);
+                        }
+                    });
+                    res.send("Successfully updated data");
+                }
+                else{
+                    const stud = new Student({
+                        name: name1,
+                        favourite_teacher: []
+                    });
+                    stud.favourite_teacher.push(id);
+                    stud.save(function(err){
+                        if(!err){
+                            res.send("Successfully Added new student");
+                        }
+                        else{
+                            res.send(err);
+                        }
+                    });
+                    Teacher.updateOne({tid: id},{$inc: {count: 1}}, function(err){
+                        if(!err){
+                            console.log("successfully increased count by 1 from new Record");
+                        }
+                        else{
+                            console.log(err);
+                        }
+                    });
+                }
+            }
+            else{
+                res.send(err);
+            }
+        })
+    }
     })
 });
 
@@ -170,10 +175,11 @@ app.route("/teachers/favouriteTeacher")
 app.route("/students/login")
 .post(function(req,res){
     const user ={
-        username: req.body.username,
-        email: req.body.email
+        id: 1,
+        username: 'Bro',
+        email: 'bro@gmail.com'
     }
-    jwt.sign({user}, 'secreykey', function(err,token){
+    jwt.sign({user}, 'secretkey', function(err,token){
         res.json({token});
     })
 })
