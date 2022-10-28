@@ -135,11 +135,21 @@ app.route("/students/deleteFavourite")
             res.send(err);
         }
     });
+});
 
-
+app.route("/teachers/favouriteTeacher")
+.get(function(req,res){
+    Teacher.find({},function(err, foundTeacher)
+    {
+        if(!err)
+        {
+            res.send(foundTeacher);
+        }
+        else{
+            res.send(err);
+        }
+    }).sort({count : -1}).limit(1);
 })
-
-
 
 
 app.listen(3000, function() {console.log("Server is running on port 3000")});
