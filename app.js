@@ -8,13 +8,15 @@ app.use(bodyParser.urlencoded({extended: true}));
 mongoose.connect("mongodb://localhost:27017/clapingoDB", {useNewUrlParser: true});
 
 const teacherSchema = {
+    tid: Number,
     name: String,
-    subject: String
+    subject: String,
+    count: Number
 }
 
 const studentSchema = {
     name: String,
-    favourite_teacher: []
+    favourite_teacher: [teacherSchema.tid]
 }
 
 const Teacher = mongoose.model("Teacher", teacherSchema);
@@ -31,28 +33,37 @@ app.route("/students")
         }
     });
 })
-.post(function(req,res)
-{
-    const newStudent = new Student({
-        name: req.body.name,
-        favourite_teacher: req.body.favourite
-    });
+.post(function(req,res){
+    const name1 = req.body.studName;
+    const id = req.body.teaId;
 
-    // if(Teacher.find(function(err, foundTeacher){
-    //     if(!err){
-    //     res.send(foundTeacher);
-    //     }else{
-    //         res.send(err);
-    //     }
-    // });)
-    // newStudent.save(function(err)
-    // {
-    //     if(!err){
-    //         res.send("Successfully added a new Teacher.");
-    //     }else{
-    //         res.send(err);
-    //     }
-    // });
+    Student.findOne({name: name1}, function(err,foundData)
+    {
+        if(!err)
+        {
+            if(foundData)
+            {
+                foundData.favourite_teacher.push(id);
+                foundData.save();
+                res.send("Successfully updated data");
+            }
+            else{
+                Student.insertMany({name: name1, favourite_teacher: id}, function(err)
+                {
+                    if(!err)
+                    {
+                        res.send("Successfully inserted new Data");
+                    }
+                    else{
+                        res.send(err);
+                    }
+                });  
+            }
+        }
+        else{
+            res.send(err);
+        }
+    })
 });
 
 
