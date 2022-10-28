@@ -89,6 +89,48 @@ app.route("/teachers")
 });
 
 
+app.route("/students/favourite")
+.get(function(req,res){
+    Favourite.find(function(err, foundData){
+        if(!err){
+        res.send(foundData);
+        }else{
+            res.send(err);
+        }
+    });
+})
+.post(function(req,res){
+    const name1 = req.body.studName;
+    const id = req.body.teaId;
+
+    Favourite.findOne({Sname: name1}, function(err,foundData)
+    {
+        if(!err)
+        {
+            if(foundData)
+            {
+                foundData.Tid.push(id);
+                foundData.save();
+                res.send("Successfully updated data");
+            }
+            else{
+                Favourite.insertMany({Sname: name1, Tid: id}, function(err)
+                {
+                    if(!err)
+                    {
+                        res.send("Successfully inserted new Data");
+                    }
+                    else{
+                        res.send(err);
+                    }
+                });  
+            }
+        }
+        else{
+            res.send(err);
+        }
+    })
+});
 
 
 
