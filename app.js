@@ -7,18 +7,28 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 mongoose.connect("mongodb://localhost:27017/clapingoDB", {useNewUrlParser: true});
 
+
+
 const teacherSchema = {
+    tid: Number,
     name: String,
-    subject: String
+    subject: String,
+    count: Number
 }
 
 const studentSchema = {
     name: String,
-    favourite_teacher: []
+    standard: Number
 }
+
+const favouriteSchema = {
+    Sname: studentSchema.name,
+    Tid: [teacherSchema.tid]
+};
 
 const Teacher = mongoose.model("Teacher", teacherSchema);
 const Student = mongoose.model("Student", studentSchema);
+const Favourite = mongoose.model("Favourite", favouriteSchema);
 
 
 app.route("/students")
@@ -35,24 +45,17 @@ app.route("/students")
 {
     const newStudent = new Student({
         name: req.body.name,
-        favourite_teacher: req.body.favourite
+        standard: req.body.standard
     });
 
-    // if(Teacher.find(function(err, foundTeacher){
-    //     if(!err){
-    //     res.send(foundTeacher);
-    //     }else{
-    //         res.send(err);
-    //     }
-    // });)
-    // newStudent.save(function(err)
-    // {
-    //     if(!err){
-    //         res.send("Successfully added a new Teacher.");
-    //     }else{
-    //         res.send(err);
-    //     }
-    // });
+    newStudent.save(function(err)
+    {
+        if(!err){
+            res.send("Successfully added a new Student.");
+        }else{
+            res.send(err);
+        }
+    });
 });
 
 
@@ -69,8 +72,10 @@ app.route("/teachers")
 .post(function(req,res)
 {
     const newTeacher = new Teacher({
+        id: req.body.id,
         name: req.body.name,
-        subject: req.body.subject
+        subject: req.body.subject,
+        count: req.body.count
     });
 
     newTeacher.save(function(err)
@@ -81,7 +86,9 @@ app.route("/teachers")
             res.send(err);
         }
     });
-})
+});
+
+
 
 
 
