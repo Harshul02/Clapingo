@@ -10,15 +10,13 @@ mongoose.connect("mongodb://localhost:27017/clapingoDB", {useNewUrlParser: true}
 
 
 const teacherSchema = {
-    tid: Number,
     name: String,
-    subject: String,
-    count: Number
+    subject: String
 }
 
 const studentSchema = {
     name: String,
-    standard: Number
+    favourite_teacher: []
 }
 
 const favouriteSchema = {
@@ -45,17 +43,24 @@ app.route("/students")
 {
     const newStudent = new Student({
         name: req.body.name,
-        standard: req.body.standard
+        favourite_teacher: req.body.favourite
     });
 
-    newStudent.save(function(err)
-    {
-        if(!err){
-            res.send("Successfully added a new Student.");
-        }else{
-            res.send(err);
-        }
-    });
+    // if(Teacher.find(function(err, foundTeacher){
+    //     if(!err){
+    //     res.send(foundTeacher);
+    //     }else{
+    //         res.send(err);
+    //     }
+    // });)
+    // newStudent.save(function(err)
+    // {
+    //     if(!err){
+    //         res.send("Successfully added a new Teacher.");
+    //     }else{
+    //         res.send(err);
+    //     }
+    // });
 });
 
 
