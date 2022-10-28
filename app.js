@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const jwt = require('jsonwebtoken');
 
 const app = express();
 app.use(bodyParser.urlencoded({extended: true}));
@@ -23,6 +24,19 @@ const Teacher = mongoose.model("Teacher", teacherSchema);
 const Student = mongoose.model("Student", studentSchema);
 
 
+function verifyToken(req,res,next){
+    const bearerHeader = req.headers['authorization'];
+
+    if(typeof bearerHeader != 'undefined'){
+        const bearer = bearerHeader.split(' ');
+        const bearerToken = bearer[1];
+        req.token = bearerToken;
+        next();
+    }else{
+        res.sendStatus(403);
+    }
+}
+
 app.route("/students")
 .get(function(req,res){
     Student.find(function(err, foundStudent){
@@ -33,10 +47,12 @@ app.route("/students")
         }
     });
 })
-.post(function(req,res){
+.post(verifyToken ,function(req,res){
     const name1 = req.body.studName;
     const id = req.body.teaId;
-
+    jwt.verify(req.token, 'secretkey', function(err,authData){
+        
+    })
     Student.findOne({name: name1}, function(err,foundData)
     {
         if(!err)
@@ -149,6 +165,17 @@ app.route("/teachers/favouriteTeacher")
             res.send(err);
         }
     }).sort({count : -1}).limit(1);
+})
+
+app.route("/students/login")
+.post(function(req,res){
+    const user ={
+        username: req.body.username,
+        email: req.body.email
+    }
+    jwt.sign({user}, 'secreykey', function(err,token){
+        res.json({token});
+    })
 })
 
 
