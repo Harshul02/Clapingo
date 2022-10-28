@@ -45,19 +45,38 @@ app.route("/students")
             {
                 foundData.favourite_teacher.push(id);
                 foundData.save();
+                Teacher.updateOne({tid: id},{$inc: {count: 1}}, function(err){
+                    if(!err){
+                        console.log("successfully updated from found");
+                    }
+                    else{
+                        console.log(err);
+                    }
+                });
                 res.send("Successfully updated data");
             }
             else{
-                Student.insertMany({name: name1, favourite_teacher: id}, function(err)
-                {
-                    if(!err)
-                    {
-                        res.send("Successfully inserted new Data");
+                const stud = new Student({
+                    name: name1,
+                    favourite_teacher: []
+                });
+                stud.favourite_teacher.push(id);
+                stud.save(function(err){
+                    if(!err){
+                        res.send("Successfully Added new student");
                     }
                     else{
                         res.send(err);
                     }
-                });  
+                });
+                Teacher.updateOne({tid: id},{$inc: {count: 1}}, function(err){
+                    if(!err){
+                        console.log("successfully updated from new Record");
+                    }
+                    else{
+                        console.log(err);
+                    }
+                });
             }
         }
         else{
@@ -92,6 +111,11 @@ app.route("/teachers")
             res.send(err);
         }
     });
+});
+
+app.route("/students/deleteFavourite")
+.delete(function(req,res){
+
 })
 
 
