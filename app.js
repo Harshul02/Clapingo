@@ -47,7 +47,7 @@ app.route("/students")
                 foundData.save();
                 Teacher.updateOne({tid: id},{$inc: {count: 1}}, function(err){
                     if(!err){
-                        console.log("successfully updated from found");
+                        console.log("successfully increased count by 1 from found");
                     }
                     else{
                         console.log(err);
@@ -71,7 +71,7 @@ app.route("/students")
                 });
                 Teacher.updateOne({tid: id},{$inc: {count: 1}}, function(err){
                     if(!err){
-                        console.log("successfully updated from new Record");
+                        console.log("successfully increased count by 1 from new Record");
                     }
                     else{
                         console.log(err);
@@ -115,6 +115,27 @@ app.route("/teachers")
 
 app.route("/students/deleteFavourite")
 .delete(function(req,res){
+    const name1 = req.body.studName;
+    const id = req.body.teaId;
+
+    Student.findOneAndUpdate({name: name1},{$pull: {favourite_teacher: id}}, function(err,foundData){
+        if(!err)
+        {
+            Teacher.updateOne({tid: id},{$inc: {count: -1}}, function(err){
+                if(!err){
+                    console.log("successfully decreased count by 1");
+                }
+                else{
+                    console.log(err);
+                }
+            });
+            res.send("Successfully Deleted");
+        }
+        else{
+            res.send(err);
+        }
+    });
+
 
 })
 
