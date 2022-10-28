@@ -7,26 +7,20 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 mongoose.connect("mongodb://localhost:27017/clapingoDB", {useNewUrlParser: true});
 
-
-
 const teacherSchema = {
+    tid: Number,
     name: String,
-    subject: String
+    subject: String,
+    count: Number
 }
 
 const studentSchema = {
     name: String,
-    favourite_teacher: []
+    favourite_teacher: [teacherSchema.tid]
 }
-
-const favouriteSchema = {
-    Sname: studentSchema.name,
-    Tid: [teacherSchema.tid]
-};
 
 const Teacher = mongoose.model("Teacher", teacherSchema);
 const Student = mongoose.model("Student", studentSchema);
-const Favourite = mongoose.model("Favourite", favouriteSchema);
 
 
 app.route("/students")
@@ -39,87 +33,22 @@ app.route("/students")
         }
     });
 })
-.post(function(req,res)
-{
-    const newStudent = new Student({
-        name: req.body.name,
-        favourite_teacher: req.body.favourite
-    });
-
-    // if(Teacher.find(function(err, foundTeacher){
-    //     if(!err){
-    //     res.send(foundTeacher);
-    //     }else{
-    //         res.send(err);
-    //     }
-    // });)
-    // newStudent.save(function(err)
-    // {
-    //     if(!err){
-    //         res.send("Successfully added a new Teacher.");
-    //     }else{
-    //         res.send(err);
-    //     }
-    // });
-});
-
-
-app.route("/teachers")
-.get(function(req,res){
-    Teacher.find(function(err, foundTeacher){
-        if(!err){
-        res.send(foundTeacher);
-        }else{
-            res.send(err);
-        }
-    });
-})
-.post(function(req,res)
-{
-    const newTeacher = new Teacher({
-        id: req.body.id,
-        name: req.body.name,
-        subject: req.body.subject,
-        count: req.body.count
-    });
-
-    newTeacher.save(function(err)
-    {
-        if(!err){
-            res.send("Successfully added a new Teacher.");
-        }else{
-            res.send(err);
-        }
-    });
-});
-
-
-app.route("/students/favourite")
-.get(function(req,res){
-    Favourite.find(function(err, foundData){
-        if(!err){
-        res.send(foundData);
-        }else{
-            res.send(err);
-        }
-    });
-})
 .post(function(req,res){
     const name1 = req.body.studName;
     const id = req.body.teaId;
 
-    Favourite.findOne({Sname: name1}, function(err,foundData)
+    Student.findOne({name: name1}, function(err,foundData)
     {
         if(!err)
         {
             if(foundData)
             {
-                foundData.Tid.push(id);
+                foundData.favourite_teacher.push(id);
                 foundData.save();
                 res.send("Successfully updated data");
             }
             else{
-                Favourite.insertMany({Sname: name1, Tid: id}, function(err)
+                Student.insertMany({name: name1, favourite_teacher: id}, function(err)
                 {
                     if(!err)
                     {
@@ -136,6 +65,34 @@ app.route("/students/favourite")
         }
     })
 });
+
+
+app.route("/teachers")
+.get(function(req,res){
+    Teacher.find(function(err, foundTeacher){
+        if(!err){
+        res.send(foundTeacher);
+        }else{
+            res.send(err);
+        }
+    });
+})
+.post(function(req,res)
+{
+    const newTeacher = new Teacher({
+        name: req.body.name,
+        subject: req.body.subject
+    });
+
+    newTeacher.save(function(err)
+    {
+        if(!err){
+            res.send("Successfully added a new Teacher.");
+        }else{
+            res.send(err);
+        }
+    });
+})
 
 
 
