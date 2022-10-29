@@ -120,8 +120,10 @@ app.route("/teachers")
 .post(function(req,res)
 {
     const newTeacher = new Teacher({
+        tid: req.body.tid,
         name: req.body.name,
-        subject: req.body.subject
+        subject: req.body.subject,
+        count: 0
     });
 
     newTeacher.save(function(err)
