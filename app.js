@@ -179,7 +179,7 @@ app.route("/students/login")
         username: 'Bro',
         email: 'bro@gmail.com'
     }
-    jwt.sign({user}, 'secretkey', function(err,token){
+    jwt.sign({user}, 'secretkey',{expiresIn: '30s'}, function(err,token){
         res.json({token});
     })
 })
