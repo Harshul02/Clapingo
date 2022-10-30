@@ -21,12 +21,14 @@ app.route("/students")
 .get()
 ```
 
-- To add new student.
+- To add new student.<br>
+
+It accepts two parameters, student name as **studName** and teacher id as **teaId**. It also require a token which is generated at the time of login and that token is used to add data using post request.
 ```
 app.route("/students")
 .post()
 ```
-It accepts two parameters, student name as **studName** and teacher id as **teaId**. It also require a token which is generated at the time of login and that token is used to add data using post request.
+
 
 - To get details of all Teachers
 
@@ -35,19 +37,23 @@ app.route("/teachers")
 .get()
 ```
 
-- To add new Teacher
+- To add new Teacher<br>
+
+It accepts three parameters,Teacher Id as **tid**, Teacher name as **name**,Teacher's subject as **subject**.
 ```
 app.route("/teachers")
 .post()
 ```
-It accepts three parameters,Teacher Id as **tid**, Teacher name as **name**,Teacher's subject as **subject**.
 
-- To delete teacher from student's favourite list
+
+- To delete teacher from student's favourite list<br>
+
+It accepts two parameters, student name as **studName** who wants to delete and teacher id as **teaId** of that teacher, student wants to delete. 
 ```
 app.route("/students/deleteFavourite")
 .delete()
 ```
-It accepts two parameters, student name as **studName** who wants to delete and teacher id as **teaId** of that teacher, student wants to delete. 
+
 
 - To find the Favourite Teacher
 ```
