@@ -172,7 +172,7 @@ app.route("/teachers/favouriteTeacher")
             res.send(err);
         }
     }).sort({count : -1}).limit(1);
-})
+});
 
 app.route("/students/login")
 .post(function(req,res){
@@ -184,7 +184,7 @@ app.route("/students/login")
     jwt.sign({user}, 'secretkey',{expiresIn: '30s'}, function(err,token){
         res.json({token});
     })
-})
+});
 
 
 app.listen(3000, function() {console.log("Server is running on port 3000")});
